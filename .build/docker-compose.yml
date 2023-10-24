@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  web: &web
+    image: web-backend
+#    restart: always
+    build:
+      context: ../
+      dockerfile: ".build/Dockerfile"
+    command: /bin/sh -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - ../:/project
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - postgres
+    env_file:
+      - ../.envs/.local/.django
+      - ../.envs/.local/.secret
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+  celery:
+    <<: *web
+    image: web-celery
+    restart: unless-stopped
+    depends_on:
+      - redis
+    volumes:
+      - ..:/project:z
+    ports: [ ]
+    command: celery -A core.celery_app worker -l INFO
+  postgres:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=app_db_name
+      - POSTGRES_USER=app_db_user
+      - POSTGRES_PASSWORD=app_db_password
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+    ports:
+      - "5435:5432"
+
+volumes:
+  postgres_data:
+  esdata:
+    driver: local
