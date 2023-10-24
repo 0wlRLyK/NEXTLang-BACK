@@ -36,8 +36,7 @@ ifeq (logs,$(firstword $(MAKECMDGOALS)))
   $(eval $(RUN_ARGS):;@:)
 endif
 test:
-	@docker-compose -f ./.build/docker-compose.yml run -e PYTHONDONTWRITEBYTECODE=1 --rm web pytest -p no:cacheprovider $(RUN_ARGS) -s -vv --create-db
-
+	@docker-compose -f ./.build/docker-compose.yml run -e PYTHONDONTWRITEBYTECODE=1 --rm web python manage.py test
 validate:
 	@docker-compose -f ./.build/docker-compose.yml run -e PRE_COMMIT_HOME=/tmp --rm web pre-commit run --all-files -c .pre-commit-config.yaml
 

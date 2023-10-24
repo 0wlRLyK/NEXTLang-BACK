@@ -1,0 +1,9 @@
+{% load i18n %}
+
+<h2>Email Change Requested</h2>
+<p>To confirm changing of your email on {{ site_name }}, please follow the link:</p>
+<p><a href="{{ url|safe }}">{{ url|safe }}</a></p>
+
+<p>{% trans "Thanks for using our site!" %}</p>
+
+<p>{% blocktrans %}The {{ site_name }} team{% endblocktrans %}</p>

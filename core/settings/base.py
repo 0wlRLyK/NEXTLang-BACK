@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 IS_TESTING = sys.argv[1:2] == ["test"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_yasg",
     "corsheaders",
+    "apps.users",
 ]
 
 MIDDLEWARE = [
@@ -133,6 +134,9 @@ USE_I18N = True
 
 USE_TZ = True
 
+SITE_NAME = "NextLang"
+
+SITE_DOMAIN = "nextlang.app"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -145,6 +149,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+AUTH_USER_MODEL = "users.User"
 
 REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
@@ -159,6 +164,17 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.JSONParser",
         "rest_framework.parsers.MultiPartParser",
     ],
+}
+SWAGGER_SETTINGS = {
+    "DEFAULT_AUTO_SCHEMA_CLASS": "common.docs.schema_generator.CustomSwaggerAutoSchema",
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "Enter your Bearer token in the format 'Bearer &lt;token&gt;'",
+        }
+    },
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
