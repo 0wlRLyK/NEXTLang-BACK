@@ -2,7 +2,8 @@ import factory
 from factory.django import DjangoModelFactory
 from faker import Faker
 
-from apps.courses.models import Course, Language
+from apps.courses.models import Course, Language, UserCourse
+from tests.users.factories import UserFactory
 
 faker = Faker()
 
@@ -33,3 +34,12 @@ class CourseFactory(DjangoModelFactory):
         if create and self.from_language == self.to_language:
             self.to_language = LanguageFactory()
             self.save()
+
+
+class UserCourseFactory(DjangoModelFactory):
+    class Meta:
+        model = UserCourse
+
+    user = factory.SubFactory(UserFactory)
+    course = factory.SubFactory(CourseFactory)
+    is_default = True
