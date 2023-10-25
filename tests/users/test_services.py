@@ -1,7 +1,9 @@
 from django.test import TestCase
 
+from apps.courses.models import UserCourse, UserDay
 from apps.users.models import ActivationCode, User
 from services.users import UnauthorizedUserService, UsersService
+from tests.courses.factories import CourseFactory
 from tests.users.factories import ActivationCodeFactory  # type: ignore
 from tests.users.factories import UserFactory
 
@@ -52,14 +54,23 @@ class TestUsersService(TestCase):
 
 
 class TestUnauthorizedUserService(TestCase):
+    def setUp(self) -> None:
+        self.course = CourseFactory.create()
+
     def test_create_user(self):
         data = {
             "email": "test@example.com",
             "username": "testuser",
+            "default_course": self.course,
         }
         password = "testpassword"
 
         user = UnauthorizedUserService.create_user(data, password)
+        user_course = UserCourse.objects.get(user=user, course=self.course)
+        user_day = UserDay.objects.filter(user_course=user_course)
 
         self.assertTrue(User.objects.filter(email="test@example.com").exists())
         self.assertTrue(user.check_password(password))
+        self.assertEqual(user_course.course, self.course)
+        self.assertTrue(user_day.exists())
+        self.assertEqual(user_day.count(), 1)

@@ -4,7 +4,9 @@ from django.conf import settings
 from django.db import transaction
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from apps.courses.models import UserCourse
 from apps.users.models import ActivationCode, User
+from services.courses import UserDayService, UserWithoutDefaultCourse
 from services.users.dto import AccessRefreshTokensDTO
 from tasks.users import send_activation_email
 
@@ -109,8 +111,18 @@ class UnauthorizedUserService:
         :param password: raw password
         :return: User object
         """
+        default_course = data.pop("default_course", None)
+        if not default_course:
+            raise UserWithoutDefaultCourse
+
         user = User(**data)
         user.set_password(password)
         user.save()
-        user.save()
+
+        course = UnauthorizedUserService.create_user_course(user, default_course)
+        UserDayService(course).get_or_create_user_day()
         return user
+
+    @staticmethod
+    def create_user_course(user: User, course: UserCourse) -> UserCourse:
+        return UserCourse.objects.create(user=user, course=course)

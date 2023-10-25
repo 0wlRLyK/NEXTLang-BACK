@@ -11,12 +11,16 @@ from api.users.mixins.serializers import (
     EmailValidationMixin,
     PasswordMatchValidationMixin,
 )
+from apps.courses.models import Course
 from apps.users.models import User
 from tasks.users import send_email_confirmation
 
 
 class UserSerializer(PasswordMatchValidationMixin, serializers.ModelSerializer):
     password_repeat = serializers.CharField(write_only=True, required=True)
+    default_course = serializers.PrimaryKeyRelatedField(
+        queryset=Course.objects.all(), write_only=True
+    )
 
     def validate_password(self, value):
         validate_password(value)
@@ -43,6 +47,7 @@ class UserSerializer(PasswordMatchValidationMixin, serializers.ModelSerializer):
             "following": {"read_only": True},
             "first_name": {"required": True},
             "last_name": {"required": True},
+            "birthdate": {"required": True},
         }
 
 

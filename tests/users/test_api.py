@@ -10,8 +10,10 @@ from django.utils.timezone import now
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from apps.courses.models import UserCourse, UserDay
 from apps.users.models import ActivationCode, User
 from common.tests import get_token_for_user
+from tests.courses.factories import CourseFactory
 from tests.users.factories import UserFactory, fake  # type: ignore
 
 
@@ -20,13 +22,14 @@ class UserSignUpTests(APITestCase):
     def setUpClass(cls):
         super(UserSignUpTests, cls).setUpClass()
         cls.user = UserFactory.create()
+        cls.course = CourseFactory.create()
 
     def test_successful_signup(self):
         image_path = os.path.join(os.path.dirname(__file__), "../_data/1.jpg")
         with open(image_path, "rb") as image:
             password = fake.password()
             data = {
-                "email": "0wlrlyk@gmail.com",
+                "email": fake.email(),
                 "username": fake.user_name(),
                 "password": password,
                 "password_repeat": password,
@@ -34,6 +37,7 @@ class UserSignUpTests(APITestCase):
                 "birthdate": fake.date_of_birth(minimum_age=14).strftime("%Y-%m-%d"),
                 "first_name": fake.first_name(),
                 "last_name": fake.last_name(),
+                "default_course": self.course.pk,
             }
             url = reverse("users:signup")
             response = self.client.post(url, data, format="multipart")
@@ -54,6 +58,7 @@ class UserSignUpTests(APITestCase):
                 "birthdate": fake.date_of_birth(minimum_age=14).strftime("%Y-%m-%d"),
                 "first_name": fake.first_name(),
                 "last_name": fake.last_name(),
+                "default_course": self.course.pk,
             }
             url = reverse("users:signup")
             response = self.client.post(url, data, format="multipart")
@@ -95,6 +100,7 @@ class UserSignUpTests(APITestCase):
                 "birthdate": fake.date_of_birth(minimum_age=14).strftime("%Y-%m-%d"),
                 "first_name": fake.first_name(),
                 "last_name": fake.last_name(),
+                "default_course": self.course.pk,
             }
             url = reverse("users:signup")
             response = self.client.post(url, data, format="multipart")
@@ -327,6 +333,7 @@ class UserSignUpTests(APITestCase):
             "username": fake.user_name(),
             "first_name": fake.first_name(),
             "last_name": fake.last_name(),
+            "default_course": self.course.pk,
         }
         # Part 1 :: Create user and send activation letter at email
         url = reverse("users:signup")
@@ -363,9 +370,14 @@ class UserSignUpTests(APITestCase):
             )
             self.assertEqual(response_update.status_code, 200)
             user.refresh_from_db()
-
+            user_course = UserCourse.objects.get(user=user, course=self.course)
+            user_day = UserDay.objects.filter(user_course=user_course)
+            self.assertEqual(user_course.course, self.course)
+            self.assertTrue(user_day.exists())
+            self.assertEqual(user_day.count(), 1)
             self.assertEqual(user.is_active, True)
             self.assertEqual(user.username, update_data.get("username"))
+
         self.assertEqual(response_create.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response_resend_activation_code.status_code, status.HTTP_204_NO_CONTENT
@@ -382,6 +394,7 @@ class UserSignUpTests(APITestCase):
             "username": fake.user_name(),
             "first_name": fake.first_name(),
             "last_name": fake.last_name(),
+            "default_course": self.course.pk,
         }
         # Part 1 :: Create user and send activation letter at email
         url = reverse("users:signup")
