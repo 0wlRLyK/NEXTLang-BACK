@@ -47,7 +47,12 @@ INSTALLED_APPS = [
     "rest_framework",
     "drf_yasg",
     "corsheaders",
+    "ckeditor",
     "apps.users",
+    "apps.courses",
+    "apps.audition",
+    "apps.grammar",
+    "apps.vocabulary",
 ]
 
 MIDDLEWARE = [

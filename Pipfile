@@ -18,6 +18,7 @@ factory-boy = "*"
 faker = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
+django-ckeditor = "*"
 
 [dev-packages]
 black = "*"
