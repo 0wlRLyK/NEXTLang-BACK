@@ -10,6 +10,7 @@ def send_activation_email(self, user_pk: int, is_created: bool) -> None:
     Args:
         self:
         user_pk(int): ID of User
+        is_created(bool): identify is it first request of user
     """
     from apps.users.models import User
 

@@ -10,9 +10,10 @@ from api.courses.exceptions import CourseAlreadyStudyingAPIException
 from api.courses.serializers import (
     AddCourseSerializer,
     CourseSerializer,
+    ExerciseTypeSerializer,
     UserCourseSerializer,
 )
-from apps.courses.models import Course, UserCourse
+from apps.courses.models import Course, ExerciseType, UserCourse
 from common.views import CustomModelViewSet, action_with_serializer
 from services.courses import CourseAlreadyStudying, UserCourseService
 
@@ -20,6 +21,12 @@ from services.courses import CourseAlreadyStudying, UserCourseService
 class CoursesListAPIView(ListAPIView):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    http_method_names = ["get"]
+
+
+class ExerciseTypeListAPIView(ListAPIView):
+    queryset = ExerciseType.objects.all()
+    serializer_class = ExerciseTypeSerializer
     http_method_names = ["get"]
 
 

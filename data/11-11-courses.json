@@ -1,0 +1,994 @@
+[
+  {
+    "model": "courses.language",
+    "pk": 1,
+    "fields": {
+      "name": "Українська",
+      "code": "ua"
+    }
+  },
+  {
+    "model": "courses.language",
+    "pk": 2,
+    "fields": {
+      "name": "English",
+      "code": "en"
+    }
+  },
+  {
+    "model": "courses.course",
+    "pk": 1,
+    "fields": {
+      "name": "Англійська українською",
+      "from_language": 1,
+      "to_language": 2
+    }
+  },
+  {
+    "model": "courses.level",
+    "pk": 1,
+    "fields": {
+      "name": "Початковий"
+    }
+  },
+  {
+    "model": "courses.level",
+    "pk": 2,
+    "fields": {
+      "name": "Просунутий"
+    }
+  },
+  {
+    "model": "courses.level",
+    "pk": 3,
+    "fields": {
+      "name": "Середній"
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 1,
+    "fields": {
+      "name": "Sentence translation",
+      "slug": "sentence-translation",
+      "conditions": "<p>The user is given a sentence in their native language and has to translate it into the language they are learning. The answer should take into account all translation options, including versions with abbreviations</p>",
+      "points": "20.00",
+      "repeat_points": "10.00",
+      "iterations": 3,
+      "topic_type": "[\"grammar\"]",
+      "is_reset_points_after_error": true,
+      "question_schema": {
+        "type": "object",
+        "title": "Sentence translation",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "required": [
+          "sentence"
+        ],
+        "properties": {
+          "sentence": {
+            "type": "string"
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answers"
+        ],
+        "properties": {
+          "answers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "sentence": "Я люблю читати книги."
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 2,
+    "fields": {
+      "name": "Make sentences from a set of words",
+      "slug": "make-sentences",
+      "conditions": "<p>The user is given a sentence in his/her native language and a set of words to make a sentence in the target language</p>",
+      "points": "15.00",
+      "repeat_points": "7.50",
+      "iterations": 3,
+      "topic_type": "[\"grammar\", \"audition\"]",
+      "is_reset_points_after_error": true,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "words",
+          "sentence"
+        ],
+        "properties": {
+          "words": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sentence": {
+            "type": "string"
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "words": [
+          "beautiful",
+          "is",
+          "today",
+          "weather"
+        ],
+        "sentence": "Сьогодні чудова погода."
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 3,
+    "fields": {
+      "name": "Complete the Sentence",
+      "slug": "complete-the-sentence",
+      "conditions": "<p>The user is presented with an incomplete sentence and has to correctly enter the remaining sentence based on the translated sentence in their language.</p>",
+      "points": "12.00",
+      "repeat_points": "6.00",
+      "iterations": 5,
+      "topic_type": "[\"grammar\", \"audition\"]",
+      "is_reset_points_after_error": false,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "_",
+          "hints",
+          "sentence",
+          "translation"
+        ],
+        "properties": {
+          "_": {
+            "type": "string"
+          },
+          "hints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sentence": {
+            "type": "string"
+          },
+          "translation": {
+            "type": "string"
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "_": "{sentence[0]} {gap} {hint[0]} {sentence[1]}",
+        "hints": [
+          "conditional tense"
+        ],
+        "sentence": "If I had a million dollars, I",
+        "translation": "Якби у мене був мільйон доларів, я"
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 4,
+    "fields": {
+      "name": "Fill in the Correct Form of the Word/Phrase",
+      "slug": "fill-in-the-correct-form-gap",
+      "conditions": "<p>The user must write a word or phrase in its correct grammatical form according to the context provided in the sentence.</p>",
+      "points": "10.00",
+      "repeat_points": "5.00",
+      "iterations": 5,
+      "topic_type": "[\"grammar\"]",
+      "is_reset_points_after_error": false,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "_",
+          "hints",
+          "sentence",
+          "word_to_correct"
+        ],
+        "properties": {
+          "_": {
+            "type": "string"
+          },
+          "hints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sentence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "word_to_correct": {
+            "type": "string"
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "_": "{sentence[0]} {gap} {word_to_correct} {sentence[1]}",
+        "hints": [
+          "third_person_singular"
+        ],
+        "sentence": [
+          "The cat",
+          "on the mat."
+        ],
+        "word_to_correct": "to sit"
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 5,
+    "fields": {
+      "name": "Insert a Word from a List",
+      "slug": "insert-word-from-list",
+      "conditions": "<p>The user selects and inserts the appropriate word from a provided list into a blank space in the sentence.</p>",
+      "points": "6.00",
+      "repeat_points": "3.00",
+      "iterations": 5,
+      "topic_type": "[\"grammar\", \"audition\"]",
+      "is_reset_points_after_error": false,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "_",
+          "options",
+          "sentence"
+        ],
+        "properties": {
+          "_": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sentence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "_": "{sentence[0]} {gap} {options} {sentence[1]}",
+        "options": [
+          "cold",
+          "hot",
+          "warm"
+        ],
+        "sentence": [
+          "It is",
+          "outside."
+        ]
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 6,
+    "fields": {
+      "name": "Insert the Word in the Correct Form",
+      "slug": "insert-word-correct-form",
+      "conditions": "<p>The user is presented with a sentence with one or more blanks, and they must fill in each blank with the correct form of the given words.</p>",
+      "points": "8.00",
+      "repeat_points": "4.00",
+      "iterations": 5,
+      "topic_type": "[\"grammar\"]",
+      "is_reset_points_after_error": true,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "_",
+          "blanks",
+          "sentence"
+        ],
+        "properties": {
+          "_": {
+            "type": "string"
+          },
+          "blanks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "hints",
+                "options"
+              ],
+              "properties": {
+                "hints": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "options": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "sentence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "_": "{sentence[0]} {gap} {blank.options} {sentence[1]}",
+        "blanks": [
+          {
+            "hints": [
+              "does"
+            ],
+            "options": [
+              "to do"
+            ]
+          }
+        ],
+        "sentence": [
+          "She is always",
+          "her homework on time."
+        ]
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 7,
+    "fields": {
+      "name": "Restore the Sequence",
+      "slug": "restore-sequence",
+      "conditions": "<p>Words or phrases are presented out of order, and the user must arrange them to form a coherent sentence.</p>",
+      "points": "4.00",
+      "repeat_points": "8.00",
+      "iterations": 4,
+      "topic_type": "[\"grammar\", \"audition\"]",
+      "is_reset_points_after_error": false,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "jumbled_sequence"
+        ],
+        "properties": {
+          "hint": {
+            "type": "string"
+          },
+          "jumbled_sequence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "hint": "Arrange to form a coherent sentence.",
+        "jumbled_sequence": [
+          "apple",
+          "an",
+          "ate",
+          "I"
+        ]
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 8,
+    "fields": {
+      "name": "Sentence Transformation",
+      "slug": "sentence-transformation",
+      "conditions": "<p>The user is given a sentence and must rewrite it in another tense or form as instructed.</p>",
+      "points": "12.00",
+      "repeat_points": "6.00",
+      "iterations": 3,
+      "topic_type": "[\"grammar\"]",
+      "is_reset_points_after_error": true,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "original_sentence"
+        ],
+        "properties": {
+          "hints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "original_sentence": {
+            "type": "string"
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "hints": [
+          "Use future tense"
+        ],
+        "original_sentence": "He goes to school every day."
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 9,
+    "fields": {
+      "name": "True/False Statements",
+      "slug": "truefalse-statements",
+      "conditions": "<p>The user is presented with a statement and must decide whether it is true or false based on a provided context or passage.</p>",
+      "points": "5.00",
+      "repeat_points": "2.50",
+      "iterations": 10,
+      "topic_type": "[\"audition\"]",
+      "is_reset_points_after_error": true,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "hint",
+          "context",
+          "statement"
+        ],
+        "properties": {
+          "hint": {
+            "type": "string"
+          },
+          "context": {
+            "type": "string"
+          },
+          "statement": {
+            "type": "string"
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "boolean"
+          }
+        }
+      },
+      "example": {
+        "hint": "Based on world geography",
+        "context": "Paris is a city in France.",
+        "statement": "Paris is the capital of Germany."
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 10,
+    "fields": {
+      "name": "Underlined Words Check",
+      "slug": "underlined-words-check",
+      "conditions": "<p>Examine the underlined words in each sentence. If they are correct, confirm as &#39;ok&#39;. If not, provide the correct words.</p>",
+      "points": "12.00",
+      "repeat_points": "6.00",
+      "iterations": 6,
+      "topic_type": "[\"grammar\", \"audition\"]",
+      "is_reset_points_after_error": true,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "_",
+          "sentence",
+          "statement"
+        ],
+        "properties": {
+          "_": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sentence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "statement": {
+            "type": "string"
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "string"
+          }
+        }
+      },
+      "example": {
+        "_": "{sentence[0]} {statement}  {sentence[1]}",
+        "sentence": [
+          "My favorite color",
+          "blue."
+        ],
+        "statement": "<u>are</u>"
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 11,
+    "fields": {
+      "name": "Sentence Matching",
+      "slug": "sentence-matching",
+      "conditions": "<p>Match sentences from two lists, where the first list is numbered and the second list is lettered. Provide matches in the format &#39;1: d, 2: h, 3: c, ...</p>",
+      "points": "8.00",
+      "repeat_points": "4.00",
+      "iterations": 3,
+      "topic_type": "[\"grammar\", \"audition\"]",
+      "is_reset_points_after_error": true,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "first",
+          "second"
+        ],
+        "properties": {
+          "first": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "second": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "matches"
+        ],
+        "properties": {
+          "matches": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "first": [
+          "1. I feel tired",
+          "2. She loves apples"
+        ],
+        "second": [
+          "a. She has a passion for fruits",
+          "b. I need to rest"
+        ]
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 12,
+    "fields": {
+      "name": "Correct Statement Identification",
+      "slug": "correct-statement-identification",
+      "conditions": "<p>Given a sentence, select the correct statement(s) that accurately continue it.</p>",
+      "points": "10.00",
+      "repeat_points": "5.00",
+      "iterations": 3,
+      "topic_type": "[\"grammar\", \"audition\"]",
+      "is_reset_points_after_error": true,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "sentence",
+          "statements"
+        ],
+        "properties": {
+          "hints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sentence": {
+            "type": "string"
+          },
+          "statements": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "sentence": "The sun rises in the east.",
+        "statements": [
+          "It's a well-known fact",
+          "It's a common misconception"
+        ]
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 13,
+    "fields": {
+      "name": "Error Correction",
+      "slug": "error-correction",
+      "conditions": "<p>The user must identify and correct a mistake within a provided sentence.</p>",
+      "points": "14.00",
+      "repeat_points": "7.00",
+      "iterations": 3,
+      "topic_type": "[\"grammar\"]",
+      "is_reset_points_after_error": true,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "incorrect_sentence",
+          "hints"
+        ],
+        "properties": {
+          "hints": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "original_sentence": {
+            "type": "string"
+          },
+          "incorrect_sentence": {
+            "type": "string"
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "hints": [
+          "subject-verb agreement"
+        ],
+        "incorrect_sentence": "She don't like apples."
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 14,
+    "fields": {
+      "name": "Choosing the Correct Tense",
+      "slug": "choosing-the-correct-tense",
+      "conditions": "<p>The user must choose the correct tense for a verb from multiple choices to complete a sentence.</p>",
+      "points": "10.00",
+      "repeat_points": "5.00",
+      "iterations": 1,
+      "topic_type": "[\"grammar\"]",
+      "is_reset_points_after_error": true,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "_",
+          "sentence",
+          "blanks",
+          "options"
+        ],
+        "properties": {
+          "_": {
+            "type": "string"
+          },
+          "blanks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sentence": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "_": "{sentence[0]} {gap} {blanks[0]} {sentence[1]}",
+        "blanks": [
+          "to go"
+        ],
+        "options": [
+          "will go",
+          "go",
+          "went"
+        ],
+        "sentence": [
+          "Tomorrow, I",
+          "to the market."
+        ]
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 15,
+    "fields": {
+      "name": "Sentence Completion/Extension",
+      "slug": "sentence-completionextension",
+      "conditions": "<p>The user is given the beginning of a sentence and must complete or extend it in a meaningful way.</p>",
+      "points": "15.00",
+      "repeat_points": "7.50",
+      "iterations": 3,
+      "topic_type": "[\"grammar\"]",
+      "is_reset_points_after_error": true,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "sentence_start"
+        ],
+        "properties": {
+          "sentence_start": {
+            "type": "string"
+          },
+          "original_sentence": {
+            "type": "string"
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "string"
+          }
+        }
+      },
+      "example": {
+        "sentence_start": "Despite the rain,"
+      }
+    }
+  },
+  {
+    "model": "courses.exercisetype",
+    "pk": 16,
+    "fields": {
+      "name": "Phrase Matching",
+      "slug": "phrase-matching",
+      "conditions": "<p>The user is presented with two lists of phrases and must match the items from List A with their corresponding items in List B.</p>",
+      "points": "8.00",
+      "repeat_points": "4.00",
+      "iterations": 3,
+      "topic_type": "[\"grammar\"]",
+      "is_reset_points_after_error": false,
+      "question_schema": {
+        "type": "object",
+        "required": [
+          "first",
+          "second"
+        ],
+        "properties": {
+          "first": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "second": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "answer_schema": {
+        "type": "object",
+        "required": [
+          "answer"
+        ],
+        "properties": {
+          "answer": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "example": {
+        "first": [
+          "I'm under the weather",
+          "Once in a blue moon"
+        ],
+        "second": [
+          "feeling ill",
+          "rarely"
+        ]
+      }
+    }
+  }
+]

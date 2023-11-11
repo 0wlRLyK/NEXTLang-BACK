@@ -3,12 +3,12 @@ from django.db import models
 from django.db.models import JSONField
 
 from apps.courses.constants import LearningLevels
-from apps.courses.models import Exercise, Topic, TopicSection
+from apps.courses.models import Exercise, Section, Topic
 
 User = get_user_model()
 
 
-class AuditionSection(TopicSection):
+class AuditionSection(Section):
     pass
 
 
@@ -34,7 +34,7 @@ class UserAuditionTopic(models.Model):
     )
     topic = models.ForeignKey(AuditionTopic, on_delete=models.CASCADE)
     points = models.DecimalField(
-        max_digits=2, decimal_places=2, verbose_name="Earned points"
+        max_digits=5, decimal_places=2, verbose_name="Earned points"
     )
     exercises = models.ManyToManyField("courses.ExerciseType", blank=True)
     is_theory_read = models.BooleanField(default=False)
@@ -51,5 +51,5 @@ class UserAuditionExerciseAttempt(models.Model):
     attempts_count = models.PositiveIntegerField(default=0)
     variant = models.ForeignKey(AuditionExerciseVariant, on_delete=models.CASCADE)
     points = models.DecimalField(
-        max_digits=2, decimal_places=2, verbose_name="Earned points"
+        max_digits=5, decimal_places=2, verbose_name="Earned points"
     )

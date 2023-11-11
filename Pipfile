@@ -19,6 +19,10 @@ faker = "*"
 djangorestframework = "*"
 djangorestframework-simplejwt = "*"
 django-ckeditor = "*"
+django-jsoneditor = "*"
+jsonschema = "*"
+django-reactive = "*"
+django-ordered-model = "*"
 
 [dev-packages]
 black = "*"

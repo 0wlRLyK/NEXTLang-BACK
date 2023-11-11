@@ -1,5 +1,8 @@
 from ckeditor.fields import RichTextField
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
+from django.utils.text import slugify
+from ordered_model.models import OrderedModel
 
 from apps.courses.constants import TopicTypes
 
@@ -9,6 +12,9 @@ class Language(models.Model):
 
     name = models.CharField(max_length=25)
     code = models.CharField(max_length=5, unique=True)
+
+    def __str__(self):
+        return f"{self.code} - {self.name}"
 
 
 class Course(models.Model):
@@ -30,63 +36,100 @@ class Course(models.Model):
         null=True,
     )
 
+    def __str__(self):
+        return self.name
+
 
 class Level(models.Model):
     """Model of complexity level"""
 
     name = models.CharField(max_length=25)
 
+    def __str__(self):
+        return self.name
+
 
 class ExerciseType(models.Model):
     name = models.CharField(max_length=200)
+    slug = models.SlugField(null=True, default=None, unique=True, blank=True)
     conditions = RichTextField()
-    points = models.DecimalField(max_digits=2, decimal_places=2)
-    repeat_points = models.DecimalField(max_digits=2, decimal_places=2)
+    points = models.DecimalField(max_digits=5, decimal_places=2)
+    repeat_points = models.DecimalField(max_digits=5, decimal_places=2)
     iterations = models.PositiveSmallIntegerField(
         default=1,
         help_text="The required number of iterations to complete the exercise",
     )
-    topic_type = models.CharField(max_length=10, choices=TopicTypes.choices)
+    topic_type = ArrayField(
+        models.CharField(
+            max_length=20,
+            choices=TopicTypes.choices,
+        ),
+        size=5,
+        null=True,
+        blank=True,
+    )
     is_reset_points_after_error = models.BooleanField(default=True)
+    question_schema = models.JSONField(default=None)
+    answer_schema = models.JSONField(default=None)
+    example = models.JSONField(default=None, null=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
 
 
-class TopicSection(models.Model):
+class Section(OrderedModel):
     course = models.ForeignKey("courses.Course", on_delete=models.SET_NULL, null=True)
     level = models.ForeignKey("courses.Level", on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=200)
     description = RichTextField()
 
-    class Meta:
+    order_with_respect_to = ("course", "level")
+
+    class Meta(OrderedModel.Meta):
         abstract = True
 
 
-class Topic(models.Model):
-    section = models.ForeignKey(TopicSection, on_delete=models.SET_NULL, null=True)
-    required_points = models.PositiveSmallIntegerField(default=0)
+class Topic(OrderedModel):
+    section = models.ForeignKey(Section, on_delete=models.SET_NULL, null=True)
     name = models.CharField(max_length=200)
     description = RichTextField()
+    slug = models.SlugField(null=True, default=None, unique=True)
+    required_points = models.PositiveSmallIntegerField(default=0)
+    order_with_respect_to = "section"
 
-    class Meta:
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+    class Meta(OrderedModel.Meta):
         abstract = True
 
 
 class Exercise(models.Model):
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True)
-    exercise = models.ForeignKey(
+    slug = models.SlugField(null=True, default=None, blank=True)
+    conditions = RichTextField()
+    exercise_type = models.ForeignKey(
         "courses.ExerciseType", on_delete=models.SET_NULL, null=True
     )
     points = models.DecimalField(
-        max_digits=2,
+        max_digits=5,
         decimal_places=2,
         help_text="You can overwrite default value of points for particular exercise",
     )
-    conditions = RichTextField()
     iterations = models.PositiveSmallIntegerField(
         default=1,
         help_text="The required number of iterations to complete the exercise",
     )
 
     class Meta:
+        ordering = ("-points",)
         abstract = True
 
 

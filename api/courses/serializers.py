@@ -1,12 +1,18 @@
 from rest_framework import serializers
 
-from apps.courses.models import Course, UserCourse
+from apps.courses.models import Course, ExerciseType, UserCourse
 
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = "__all__"
+
+
+class ExerciseTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ExerciseType
+        exclude = ["answer_schema"]
 
 
 class UserCourseSerializer(serializers.ModelSerializer):

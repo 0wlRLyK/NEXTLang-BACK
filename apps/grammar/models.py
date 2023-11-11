@@ -3,21 +3,28 @@ from django.db import models
 from django.db.models import JSONField
 
 from apps.courses.constants import LearningLevels
-from apps.courses.models import Exercise, Topic, TopicSection
+from apps.courses.models import Exercise, Section, Topic
 
 User = get_user_model()
 
 
-class GrammarSection(TopicSection):
-    pass
+class GrammarSection(Section):
+    def __str__(self):
+        return self.name
 
 
 class GrammarTopic(Topic):
     section = models.ForeignKey(GrammarSection, on_delete=models.SET_NULL, null=True)
 
+    def __str__(self):
+        return self.name
+
 
 class GrammarExercise(Exercise):
     topic = models.ForeignKey(GrammarTopic, on_delete=models.SET_NULL, null=True)
+
+    # def __str__(self):
+    #     return self.exercise.name
 
 
 class GrammarExerciseVariant(models.Model):
@@ -34,7 +41,7 @@ class UserGrammarTopic(models.Model):
     )
     topic = models.ForeignKey(GrammarTopic, on_delete=models.CASCADE)
     points = models.DecimalField(
-        max_digits=2, decimal_places=2, verbose_name="Earned points"
+        max_digits=5, decimal_places=2, verbose_name="Earned points"
     )
     exercises = models.ManyToManyField("courses.ExerciseType", blank=True)
     is_theory_read = models.BooleanField(default=False)
@@ -51,5 +58,5 @@ class UserGrammarExerciseAttempt(models.Model):
     attempts_count = models.PositiveIntegerField(default=0)
     variant = models.ForeignKey(GrammarExerciseVariant, on_delete=models.CASCADE)
     points = models.DecimalField(
-        max_digits=2, decimal_places=2, verbose_name="Earned points"
+        max_digits=5, decimal_places=2, verbose_name="Earned points"
     )
