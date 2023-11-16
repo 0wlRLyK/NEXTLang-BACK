@@ -60,3 +60,15 @@ class UserDictionary(models.Model):
     language = models.ForeignKey("courses.Language", on_delete=models.CASCADE)
     words = models.ManyToManyField(Word, blank=True)
     name = models.CharField(max_length=20)
+
+
+# class UserAuditionExerciseAttempt(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     exercise = models.ForeignKey(ExerciseType, on_delete=models.CASCADE)
+#     attempts_count = models.PositiveIntegerField(default=0)
+#     variant = models.ForeignKey(AuditionExerciseVariant, on_delete=models.CASCADE)
+#     points = models.DecimalField(
+#         max_digits=5, decimal_places=2, verbose_name="Earned points"
+#     )
+#     options = JSONField()
+#     answer = JSONField()

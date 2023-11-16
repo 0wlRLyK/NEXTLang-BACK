@@ -18,7 +18,7 @@ class GrammarSectionAdmin(OrderedModelAdmin):
 
 @admin.register(GrammarTopic)
 class GrammarTopicAdmin(OrderedModelAdmin):
-    list_display = ("name", "move_up_down_links")
+    list_display = ("name", "section", "move_up_down_links")
 
 
 class GrammarExerciseVariantInline(admin.StackedInline):
@@ -36,6 +36,7 @@ class GrammarExerciseVariantInline(admin.StackedInline):
 class GrammarExerciseAdmin(admin.ModelAdmin):
     inlines = [GrammarExerciseVariantInline]
     change_list_template = "admin/add_exercise.html"
+    list_display = ("exercise_type", "topic")
 
     def changelist_view(self, request, extra_context=None):
         extra_context = extra_context or {}

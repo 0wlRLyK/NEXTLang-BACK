@@ -4,7 +4,7 @@ from django.db import models
 from django.utils.text import slugify
 from ordered_model.models import OrderedModel
 
-from apps.courses.constants import TopicTypes
+from apps.courses.constants import LearningLevels, TopicTypes
 
 
 class Language(models.Model):
@@ -93,6 +93,9 @@ class Section(OrderedModel):
     class Meta(OrderedModel.Meta):
         abstract = True
 
+    def __str__(self):
+        return self.name
+
 
 class Topic(OrderedModel):
     section = models.ForeignKey(Section, on_delete=models.SET_NULL, null=True)
@@ -109,6 +112,7 @@ class Topic(OrderedModel):
 
     class Meta(OrderedModel.Meta):
         abstract = True
+        ordering = ("section__order", "order")
 
 
 class Exercise(models.Model):
@@ -122,11 +126,22 @@ class Exercise(models.Model):
         max_digits=5,
         decimal_places=2,
         help_text="You can overwrite default value of points for particular exercise",
+        blank=True,
     )
     iterations = models.PositiveSmallIntegerField(
         default=1,
         help_text="The required number of iterations to complete the exercise",
+        blank=True,
     )
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self.exercise_type.slug
+        if not self.points:
+            self.points = self.exercise_type.points
+        if not self.iterations:
+            self.iterations = self.exercise_type.iterations
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ("-points",)
@@ -138,6 +153,7 @@ class UserCourse(models.Model):
         "users.User", related_name="courses", on_delete=models.CASCADE
     )
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True)
+    level = models.ForeignKey(Level, on_delete=models.SET_NULL, null=True, default=None)
     total_grammar_points = models.DecimalField(
         max_digits=10, decimal_places=2, default=0
     )
@@ -179,3 +195,24 @@ class UserDay(models.Model):
 
     is_old_material_mastered = models.BooleanField(default=False)
     is_new_material_learned = models.BooleanField(default=False)
+
+
+class UserTopic(models.Model):
+    user_course = None
+    topic = None
+    is_theory_read = models.BooleanField(default=False)
+    is_passed = models.BooleanField(default=False)
+    is_learning = models.BooleanField(default=False)
+    points = models.DecimalField(
+        max_digits=5, decimal_places=2, default=0.0, verbose_name="Earned points"
+    )
+    exercises = models.ManyToManyField("courses.ExerciseType", blank=True)
+    learning_level = models.CharField(
+        max_length=20, choices=LearningLevels.choices, default=LearningLevels.STARTED
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True

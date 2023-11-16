@@ -6,7 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.courses.models import UserCourse
 from apps.users.models import ActivationCode, User
-from services.courses import UserDayService, UserWithoutDefaultCourse
+from services.courses import UserDayService, UserWithoutDefaultCourseException
 from services.users.dto import AccessRefreshTokensDTO
 from tasks.users import send_activation_email
 
@@ -113,7 +113,7 @@ class UnauthorizedUserService:
         """
         default_course = data.pop("default_course", None)
         if not default_course:
-            raise UserWithoutDefaultCourse
+            raise UserWithoutDefaultCourseException
 
         user = User(**data)
         user.set_password(password)

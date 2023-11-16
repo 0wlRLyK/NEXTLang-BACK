@@ -15,7 +15,7 @@ from api.courses.serializers import (
 )
 from apps.courses.models import Course, ExerciseType, UserCourse
 from common.views import CustomModelViewSet, action_with_serializer
-from services.courses import CourseAlreadyStudying, UserCourseService
+from services.courses import CourseAlreadyStudyingException, UserCourseService
 
 
 class CoursesListAPIView(ListAPIView):
@@ -53,6 +53,6 @@ class UserCoursesViewSet(CustomModelViewSet):
             self.service_class(self.request.user).add_course(
                 serializer.validated_data.get("course")
             )
-        except CourseAlreadyStudying:
+        except CourseAlreadyStudyingException:
             raise CourseAlreadyStudyingAPIException()
         return Response(status=status.HTTP_204_NO_CONTENT)

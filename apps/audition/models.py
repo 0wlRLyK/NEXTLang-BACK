@@ -2,8 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import JSONField
 
-from apps.courses.constants import LearningLevels
-from apps.courses.models import Exercise, Section, Topic
+from apps.courses.models import Exercise, Section, Topic, UserTopic
 
 User = get_user_model()
 
@@ -13,11 +12,17 @@ class AuditionSection(Section):
 
 
 class AuditionTopic(Topic):
-    section = models.ForeignKey(AuditionSection, on_delete=models.SET_NULL, null=True)
+    section = models.ForeignKey(
+        AuditionSection, related_name="topics", on_delete=models.SET_NULL, null=True
+    )
 
 
 class AuditionExercise(Exercise):
-    topic = models.ForeignKey(AuditionTopic, on_delete=models.SET_NULL, null=True)
+    topic = models.ForeignKey(
+        AuditionTopic,
+        on_delete=models.SET_NULL,
+        null=True,
+    )
 
 
 class AuditionExerciseVariant(models.Model):
@@ -28,21 +33,18 @@ class AuditionExerciseVariant(models.Model):
     answer = JSONField()
 
 
-class UserAuditionTopic(models.Model):
+class UserAuditionTopic(UserTopic):
     user_course = models.ForeignKey(
-        "courses.UserCourse", related_name="audition_topics", on_delete=models.CASCADE
+        "courses.UserCourse",
+        related_name="audition_topics",
+        on_delete=models.CASCADE,
     )
-    topic = models.ForeignKey(AuditionTopic, on_delete=models.CASCADE)
-    points = models.DecimalField(
-        max_digits=5, decimal_places=2, verbose_name="Earned points"
+    topic = models.ForeignKey(
+        AuditionTopic, related_name="user_topics", on_delete=models.CASCADE
     )
-    exercises = models.ManyToManyField("courses.ExerciseType", blank=True)
-    is_theory_read = models.BooleanField(default=False)
-    is_passed = models.BooleanField(default=False)
-    learning_level = models.CharField(
-        max_length=20, choices=LearningLevels.choices, default=LearningLevels.STARTED
-    )
-    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user_course", "is_learning")
 
 
 class UserAuditionExerciseAttempt(models.Model):

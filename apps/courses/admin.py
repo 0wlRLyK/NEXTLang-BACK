@@ -9,7 +9,14 @@ from apps.courses.models import Course, ExerciseType, Language, Level
 @admin.register(ExerciseType)
 class ExerciseTypeAdmin(admin.ModelAdmin):
     form = ExerciseTypeForm
-    list_display = ("name", "points")
+    list_display = (
+        "name",
+        "points",
+        "repeat_points",
+        "iterations",
+        "example",
+        "answer_schema",
+    )
     formfield_overrides = {
         JSONField: {
             "widget": JSONEditor(
