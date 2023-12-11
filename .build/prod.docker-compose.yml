@@ -61,5 +61,3 @@ services:
 
 volumes:
   postgres_data:
-  esdata:
-    driver: prod
