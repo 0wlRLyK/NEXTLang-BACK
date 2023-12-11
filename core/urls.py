@@ -30,36 +30,36 @@ urlpatterns = [
     path("api/", include("api.urls")),
 ]
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+schema_view = get_schema_view(
+    openapi.Info(
+        title="NextLang API .docs",
+        default_version="v1",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="info@s-softteam.com"),
+        license=openapi.License(name="NextLang License"),
+    ),
+    public=True,
+    patterns=urlpatterns,
+    generator_class=CustomSchemaGenerator,
+    permission_classes=[permissions.AllowAny],
+)
+urlpatterns += [
+    re_path(
+        r"^api/swagger(?P<format>\.json|\.yaml)$",
+        schema_view.without_ui(cache_timeout=0),
+        name="schema-json",
+    ),
+    path(
+        "api/swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    path(
+        "api/redoc/",
+        schema_view.with_ui("redoc", cache_timeout=0),
+        name="schema-redoc",
+    ),
+]
 if settings.DEBUG or settings.IS_TESTING:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    schema_view = get_schema_view(
-        openapi.Info(
-            title="NextLang API .docs",
-            default_version="v1",
-            terms_of_service="https://www.google.com/policies/terms/",
-            contact=openapi.Contact(email="info@s-softteam.com"),
-            license=openapi.License(name="NextLang License"),
-        ),
-        public=True,
-        patterns=urlpatterns,
-        generator_class=CustomSchemaGenerator,
-        permission_classes=[permissions.AllowAny],
-    )
-    urlpatterns += [
-        re_path(
-            r"^api/swagger(?P<format>\.json|\.yaml)$",
-            schema_view.without_ui(cache_timeout=0),
-            name="schema-json",
-        ),
-        path(
-            "api/swagger/",
-            schema_view.with_ui("swagger", cache_timeout=0),
-            name="schema-swagger-ui",
-        ),
-        path(
-            "api/redoc/",
-            schema_view.with_ui("redoc", cache_timeout=0),
-            name="schema-redoc",
-        ),
-    ]
 # fmt: on
