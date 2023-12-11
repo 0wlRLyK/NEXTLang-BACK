@@ -19,3 +19,4 @@ test_media/.upload/
 /.docs/_static/
 /.docs/.doctrees/
 /.docs/autosummary/
+/.envs/.prod/

@@ -31,4 +31,3 @@ RUN pipenv install --system --dev
 
 # copy project
 COPY . /project/
-RUN ls

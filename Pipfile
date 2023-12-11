@@ -23,6 +23,7 @@ django-jsoneditor = "*"
 jsonschema = "*"
 django-reactive = "*"
 django-ordered-model = "*"
+gunicorn = "*"
 
 [dev-packages]
 black = "*"
