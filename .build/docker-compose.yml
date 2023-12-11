@@ -48,5 +48,3 @@ services:
 
 volumes:
   postgres_data:
-  esdata:
-    driver: local
