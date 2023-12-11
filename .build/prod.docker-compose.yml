@@ -52,7 +52,7 @@ services:
       - NGINX_ENTRYPOINT_QUIET_LOGS=1
     ports:
       - "80:80"
-      - "443:443"
+      - "445:443"
     volumes:
       - /var/www/static/:/var/www/static/
       - ../.envs/.prod/nginx.conf:/etc/nginx/nginx.conf
