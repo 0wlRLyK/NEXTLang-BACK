@@ -8,6 +8,7 @@ from django.http import Http404
 from rest_framework import permissions, status
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from api.users.docs import (
     activate_docs,
@@ -166,3 +167,11 @@ class UsersAuthorizedViewSet(CustomModelViewSet):
 
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         return super(UsersAuthorizedViewSet, self).list(request, args, kwargs)
+
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    queryset = User.objects.all()
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    queryset = User.objects.all()
