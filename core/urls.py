@@ -29,7 +29,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
 ]
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
 schema_view = get_schema_view(
     openapi.Info(
         title="NextLang API .docs",
@@ -62,4 +62,5 @@ urlpatterns += [
 ]
 if settings.DEBUG or settings.IS_TESTING:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # fmt: on
